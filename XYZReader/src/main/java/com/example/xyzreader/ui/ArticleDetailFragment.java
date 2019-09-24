@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -57,24 +59,15 @@ public class ArticleDetailFragment extends Fragment implements
     private Cursor mCursor;
     private long mItemId;
     private View mRootView;
-    private int mMutedColor = 0xFF333333;
-    private ObservableScrollView mScrollView;
-    private DrawInsetsFrameLayout mDrawInsetsFrameLayout;
-    private ColorDrawable mStatusBarColorDrawable;
-
-    private int mTopInset;
-    private View mPhotoContainerView;
     private ImageView mPhotoView;
-    private int mScrollY;
-    private boolean mIsCard = false;
-    private int mStatusBarFullOpacityBottom;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
+    private FloatingActionButton mFloatingActionButton;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
     private SimpleDateFormat outputFormat = new SimpleDateFormat();
     // Most time functions can only handle 1902 - 2037
-    private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
+    private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2, 1, 1);
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -116,10 +109,15 @@ public class ArticleDetailFragment extends Fragment implements
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
-        mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
+
+        mFloatingActionButton = mRootView.findViewById(R.id.share_fab);
+        mPhotoView = mRootView.findViewById(R.id.photo);
+        mCollapsingToolbarLayout = mRootView.findViewById(R.id.collapsing_toolbar_layout);
+
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
@@ -128,9 +126,6 @@ public class ArticleDetailFragment extends Fragment implements
                         .getIntent(), getString(R.string.action_share)));
             }
         });
-
-        mPhotoView = mRootView.findViewById(R.id.photo);
-        mCollapsingToolbarLayout = mRootView.findViewById(R.id.collapsing_toolbar_layout);
 
         Toolbar toolbar = mRootView.findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -199,6 +194,15 @@ public class ArticleDetailFragment extends Fragment implements
                         @Override
                         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                             mPhotoView.setImageBitmap(bitmap);
+
+                            Palette palette = Palette.from(bitmap).generate();
+                            int mutedColor = palette.getMutedColor(getActivity().getResources().getColor(R.color.lighter_black));
+                            int mutedDarkColor = palette.getDarkMutedColor(getActivity().getResources().getColor(R.color.lighter_black));
+                            int vibrantColor = palette.getVibrantColor(getActivity().getResources().getColor(R.color.lighter_black));
+
+                            mCollapsingToolbarLayout.setContentScrimColor(mutedColor);
+                            mCollapsingToolbarLayout.setStatusBarScrimColor(mutedDarkColor);
+                            mFloatingActionButton.setBackgroundColor(vibrantColor);
                         }
 
                         @Override

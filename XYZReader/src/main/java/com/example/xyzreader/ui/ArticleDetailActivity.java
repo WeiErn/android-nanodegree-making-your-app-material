@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 
@@ -30,15 +31,10 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     private Cursor mCursor;
     private long mStartId;
-
     private long mSelectedItemId;
-    private int mSelectedItemUpButtonFloor = Integer.MAX_VALUE;
-    private int mTopInset;
 
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
-    private View mUpButtonContainer;
-    private View mUpButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,19 +45,8 @@ public class ArticleDetailActivity extends AppCompatActivity
                             View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         }
 
-        if (Build.VERSION.SDK_INT < 16) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        } else {
-            View decorView = getWindow().getDecorView();
-            // Hide the status bar.
-            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(uiOptions);
-            // Remember that you should never show the action bar if the
-            // status bar is hidden, so hide that too if necessary.
-//            ActionBar actionBar = getActionBar();
-//            actionBar.hide();
-        }
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_article_detail);
 
