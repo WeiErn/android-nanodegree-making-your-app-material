@@ -21,6 +21,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
@@ -54,7 +55,6 @@ public class ArticleDetailFragment extends Fragment implements
     private static final String TAG = "ArticleDetailFragment";
 
     public static final String ARG_ITEM_ID = "item_id";
-    private static final float PARALLAX_FACTOR = 1.25f;
 
     private Cursor mCursor;
     private long mItemId;
@@ -62,6 +62,7 @@ public class ArticleDetailFragment extends Fragment implements
     private ImageView mPhotoView;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private FloatingActionButton mFloatingActionButton;
+    private AppBarLayout mAppBar;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -106,13 +107,13 @@ public class ArticleDetailFragment extends Fragment implements
         getLoaderManager().initLoader(0, null, this);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+//    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
-
+        mAppBar = mRootView.findViewById(R.id.app_bar);
         mFloatingActionButton = mRootView.findViewById(R.id.share_fab);
         mPhotoView = mRootView.findViewById(R.id.photo);
         mCollapsingToolbarLayout = mRootView.findViewById(R.id.collapsing_toolbar_layout);
@@ -126,6 +127,7 @@ public class ArticleDetailFragment extends Fragment implements
                         .getIntent(), getString(R.string.action_share)));
             }
         });
+
 
         Toolbar toolbar = mRootView.findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -158,15 +160,33 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
-        TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
+        TextView titleView = mRootView.findViewById(R.id.article_title);
+        TextView bylineView = mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
-        TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
+        TextView bodyView = mRootView.findViewById(R.id.article_body);
 
         if (mCursor != null) {
 
             if (isLargeWidthScreen()) {
-                ((TextView) mRootView.findViewById(R.id.article_title)).setText(mCursor.getString(ArticleLoader.Query.TITLE));
+                titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
+                mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                    boolean isShow = true;
+                    int scrollRange = -1;
+
+                    @Override
+                    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                        if (scrollRange == -1) {
+                            scrollRange = appBarLayout.getTotalScrollRange();
+                        }
+                        if (scrollRange + verticalOffset == 0) {
+                            mCollapsingToolbarLayout.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
+                            isShow = true;
+                        } else if (isShow) {
+                            mCollapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
+                            isShow = false;
+                        }
+                    }
+                });
             } else {
                 mCollapsingToolbarLayout.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
             }
@@ -198,11 +218,12 @@ public class ArticleDetailFragment extends Fragment implements
                             Palette palette = Palette.from(bitmap).generate();
                             int mutedColor = palette.getMutedColor(getActivity().getResources().getColor(R.color.lighter_black));
                             int mutedDarkColor = palette.getDarkMutedColor(getActivity().getResources().getColor(R.color.lighter_black));
-                            int vibrantColor = palette.getVibrantColor(getActivity().getResources().getColor(R.color.lighter_black));
+//                            int vibrantColor = palette.getVibrantColor(getActivity().getResources().getColor(R.color.lighter_black));
 
                             mCollapsingToolbarLayout.setContentScrimColor(mutedColor);
                             mCollapsingToolbarLayout.setStatusBarScrimColor(mutedDarkColor);
-                            mFloatingActionButton.setBackgroundColor(vibrantColor);
+//                            mFloatingActionButton.setBackgroundColor(vibrantColor);
+                            mRootView.findViewById(R.id.meta_bar).setBackgroundColor(mutedColor);
                         }
 
                         @Override
