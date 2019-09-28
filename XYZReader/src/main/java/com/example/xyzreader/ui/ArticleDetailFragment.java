@@ -210,11 +210,11 @@ public class ArticleDetailFragment extends Fragment implements
                             Palette palette = Palette.from(bitmap).generate();
                             int mutedColor = palette.getMutedColor(getActivity().getResources().getColor(R.color.lighter_black));
                             int mutedDarkColor = palette.getDarkMutedColor(getActivity().getResources().getColor(R.color.lighter_black));
-                            int vibrantColor = palette.getVibrantColor(getActivity().getResources().getColor(R.color.lighter_black));
+//                            int vibrantColor = palette.getVibrantColor(getActivity().getResources().getColor(R.color.lighter_black));
 
                             mCollapsingToolbarLayout.setContentScrimColor(mutedColor);
                             mCollapsingToolbarLayout.setStatusBarScrimColor(mutedDarkColor);
-                            mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
+//                            mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
                             mRootView.findViewById(R.id.meta_bar).setBackgroundColor(mutedColor);
                         }
 
