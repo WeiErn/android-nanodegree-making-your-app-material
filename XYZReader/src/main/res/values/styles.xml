@@ -23,6 +23,4 @@
         <item name="colorAccent">@color/pink_a200</item>
     </style>
 
-    <style name="Theme.Bacon.TransparentStatusBar" />
-
 </resources>

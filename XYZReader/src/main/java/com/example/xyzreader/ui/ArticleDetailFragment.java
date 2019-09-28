@@ -7,10 +7,6 @@ import android.content.Loader;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,9 +14,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -37,8 +31,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 
@@ -218,11 +210,11 @@ public class ArticleDetailFragment extends Fragment implements
                             Palette palette = Palette.from(bitmap).generate();
                             int mutedColor = palette.getMutedColor(getActivity().getResources().getColor(R.color.lighter_black));
                             int mutedDarkColor = palette.getDarkMutedColor(getActivity().getResources().getColor(R.color.lighter_black));
-//                            int vibrantColor = palette.getVibrantColor(getActivity().getResources().getColor(R.color.lighter_black));
+                            int vibrantColor = palette.getVibrantColor(getActivity().getResources().getColor(R.color.lighter_black));
 
                             mCollapsingToolbarLayout.setContentScrimColor(mutedColor);
                             mCollapsingToolbarLayout.setStatusBarScrimColor(mutedDarkColor);
-//                            mFloatingActionButton.setBackgroundColor(vibrantColor);
+                            mFloatingActionButton.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
                             mRootView.findViewById(R.id.meta_bar).setBackgroundColor(mutedColor);
                         }
 
@@ -236,12 +228,6 @@ public class ArticleDetailFragment extends Fragment implements
 
                         }
 
-                        private int makeColorDarker(int color) {
-                            float[] hsv = new float[3];
-                            Color.colorToHSV(color, hsv);
-                            hsv[2] *= 0.75f; // value component
-                            return Color.HSVToColor(hsv);
-                        }
                     });
         }
     }
